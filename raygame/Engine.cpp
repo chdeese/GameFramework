@@ -103,22 +103,35 @@ int Engine::getCurrentSceneIndex()
 int Engine::addScene(Scene* scene)
 {
 	//If the scene is null then return before running any other logic
+	if (!scene)
+		return -1;
 
 	//Create a new array with a size one greater than our old array
+	Scene** temp = new Scene*[m_sceneCount + 1];
 
 	//Copy the values from the old array to the new array
+	for (int i = 0; i < m_sceneCount; i++)
+	{
+		temp[i] = m_scenes[i];
+	}
 
 	//Store the current index
+	int tempIndex = 0;
 
 	//Set the last value in the new array to be the scene we want to add
+	temp[m_sceneCount] = scene;
 
-	//Sets the scene at the new index to be the scene passed in
+	//delete old array
+	delete[] m_scenes;
 
 	//Set old array to hold the values of the new array
+	m_scenes = temp;
 
 	//Increase the scene count by one
+	m_sceneCount++;
 
 	//Return the index this scene is at
+	return m_sceneCount - 1;
 }
 
 void Engine::addActorToDeletionList(Actor* actor)
@@ -140,22 +153,42 @@ void Engine::addActorToDeletionList(Actor* actor)
 bool Engine::removeScene(Scene* scene)
 {
 	//Exit the function if the scene was null
+	if (!scene)
+	{
+		return false;
+	}
 
 	//Create variable to store if the scene was removed
+	bool isRemoved = false;
 
 	//Create a new temporary array with a size one less than our old array
+	Scene** temp = new Scene * [m_sceneCount - 1];
 
 	//Create variable to access temporary array index
+	int tempIndex = 0;
 
 	//Copy values from the old array to the new array except the scene to delete
-		//If the actor to delete was skipped, set the scene removed variable to true.
-
+	for (int i = 0; i < m_sceneCount; i++)
+	{
+		if (m_scenes[i] = scene)
+		{
+			//If the actor to delete was skipped, set the scene removed variable to true.
+			isRemoved = true;
+			continue;
+		}
+		temp[tempIndex] = m_scenes[i];
+		tempIndex++;
+	}
 
 	//Set the old array to the new array and decrease the scene count if the actor was removed
-
-	//Delete the temporary array
-
+	if (isRemoved)
+	{
+		delete[] m_scenes;
+		m_scenes = temp;
+		m_sceneCount--;
+	}
 	//Return whether or not the removal was successful
+	return isRemoved;
 }
 
 void Engine::setCurrentScene(int index)
