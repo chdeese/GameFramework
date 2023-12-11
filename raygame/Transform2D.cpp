@@ -76,61 +76,126 @@ void Transform2D::setLocalPosition(MathLibrary::Vector2 value)
 void Transform2D::addChild(Transform2D* child)
 {
     //Create a new array with a size one greater than our old array
+    Transform2D** temp = new Transform2D * [m_childCount + 1];
 
     //Copy the values from the old array to the new array
-
+    for (int i = 0; i < m_childCount; i++)
+    {
+        temp[i] = m_children[i];
+    }
 
     //Set the last value in the new array to be the transform we want to add
+    temp[m_childCount] = child;
 
     //Set the childs parent to be this transform
+    child->m_parent = this;
 
     //Set old array to hold the values of the new array
+    m_children = temp;
 
     //Increase the child count by one
+    m_childCount++;
 }
 
 bool Transform2D::removeChild(int index)
 {
     //Exit the function if the index was out of bounds
+    if (index > m_childCount - 1 || index < 0)
+    {
+        return false;
+    }
 
     //Create variable to store if the child was removed
+    bool isRemoved = false;
 
     //Create a new temporary array with a size one less than our old array
+    Transform2D** temp = new Transform2D * [m_childCount - 1];
 
     //Create variable to access temporary array index
+    int tempIndex = 0;
 
     //Copy values from the old array to the new array except the child to delete
         //If the child to delete was skipped, set the child removed variable to true.
+    for (int i = 0; i < m_childCount; i++)
+    {
+        if (i == index)
+        {
+            //change IsRemoved to true
+            //use continue keyword to skip saving this child and increasing the index of the new array.
+            isRemoved = true;
+            continue;
+        }
+        //store the new child in the empty spot at the end of the array
+        temp[tempIndex] = m_children[i];
+        //interate forward if the children added is increased
+        tempIndex++;
+    }
 
-    //Set the old array to the new array and decrease the child count if the child was removed
+    if(isRemoved)
+    {
+        //cleanup the old array no longer being referenced
+        delete[] m_children;
+
+        //Set the old array to the new array and decrease the child count if the child was removed
+        m_children = temp;
+        m_childCount--;
+    }
 
     //Set the child parent to null
-
-    //Delete the temporary array
+    m_children[index]->m_parent = nullptr;
 
     //Return whether or not the removal was successful
+    return isRemoved;
 }
 
 bool Transform2D::removeChild(Transform2D* child)
 {
     //Exit the function if the child was null
+    if (!child)
+        return false;
 
     //Create variable to store if the child was removed
+    bool isRemoved = false;
 
     //Create a new temporary array with a size one less than our old array
+    Transform2D** temp = new Transform2D * [m_childCount - 1];
 
     //Create variable to access temporary array index
+    int tempIndex = 0;
 
     //Copy values from the old array to the new array except the child to delete
         //If the child to delete was skipped, set the child removed variable to true.
 
-    //Set the old array to the new array and decrease the child count if the child was removed
+    for (int i = 0; i < m_childCount; i++)
+    {
+        if (m_children[i] == child)
+        {
+            //change IsRemoved to true
+            //use continue keyword to skip saving this child and increase the index of the new array.
+            isRemoved = true;
+            continue;
+        }
+        //store the new child in the empty spot at the end of the array
+        temp[tempIndex] = m_children[i];
+        //interate forward if the children added is increased
+        tempIndex++;
+    }
+
+    if (isRemoved)
+    {
+        //cleanup the old array no longer being referenced
+        delete[] m_children;
+
+        //Set the old array to the new array and decrease the child count if the child was removed
+        m_children = temp;
+        m_childCount--;
+    }
 
     //Set the child parent to null
-
-    //Delete the temporary array
+    child->m_parent = nullptr;
 
     //Return whether or not the removal was successful
+    return isRemoved;
 }
 
 void Transform2D::setScale(MathLibrary::Vector2 scale)
