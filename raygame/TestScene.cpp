@@ -1,9 +1,14 @@
 #include "TestScene.h"
 #include "Player.h"
 #include "Transform2D.h"
+#include "Component.h"
 
 void TestScene::start()
 {
+	const char* name = "Christian";
+
+	Component* comp = new Component(nullptr, name);
+
 	//equivalent of base.Start() in c#.
 	Scene::start();
 
